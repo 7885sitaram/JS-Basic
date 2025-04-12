@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+
+    <a href="portres.pdf" download="port.pdf">Download</a>
+
+    <a href="portres.pdf" target="_blank" rel="noopener noreferrer">
+      📄 View Resume
+    </a>
+
+    <div id="show"></div>
+
+    <script>
+
+        let show =document.getElementById('show')
+
+        let value = [
+        {
+            name : 'sitaram',
+            age : 18,
+            city : 'ahmedabad',
+            sallery : 50000 
+        },
+
+        {
+            name : 'shyam',
+            age : 20,
+            city : 'surat',
+            sallery : 28000 
+        },
+        {
+            name : 'kalpesh',
+            age : 30,
+            city : 'pune',
+            sallery : 80000 
+        },
+    
+    ]
+
+    let arr =JSON.parse(localStorage.getItem('data') )|| []
+
+    arr.push(value) 
+      
+    
+        localStorage.setItem('data', JSON.stringify(value));
+
+        let res = JSON.parse(localStorage.getItem('data'))
+
+        console.log(res[0].name)
+
+        
+
+        // res.map((e)=>{
+
+        //     console.log(e.age)
+
+        console.log(res)
+
+            show.innerHTML = `
+            <table>
+        <thead>
+            <tr>
+            <th>
+              name
+            </th>
+            <th>
+              age
+            </th>
+            <th>
+              city
+            </th>
+            <th>
+              sallery
+            </th>
+        </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>${res[0].name}</td>
+                <td>${res[0].age}</td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td>${res[1].name}</td>
+                <td>${res[1].age}</td>
+                <td></td>
+                <td></td>
+            </tr>
+
+        </tbody>
+    </table>`
+           
+        // })
+
+
+    </script>
+    
+</body>
+</html>
