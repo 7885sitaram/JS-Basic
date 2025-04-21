@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LocalStorage</title>
+
+</head>
+<body>
+
+        <form id="form">
+            <input id="name" type="text" placeholder="Enter your name" required><br><br>
+            <input id="email" type="email" placeholder="Enter your email" required><br><br>
+            <input id="pass" type="password" placeholder="Enter your password" required><br><br>
+
+            <select name="" id="selection">
+                <option value="male">male</option>
+                <option value="female">female</option>
+            </select><br><br>
+
+            <textarea name="textarea" id="textarea"></textarea><br><br>
+    
+            <button value="submit" id="btn">Submit</button><br><br>
+        </form>
+
+        <table border="2" cellspacing = '0' cellpadding = '10'>
+            <thead>
+                
+                <tr>
+                    <th>Sr. No</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Password</th>
+                    <th>Gender</th>
+                    <th>Textarea</th>
+                    <th>Active</th>
+                </tr>
+            </thead>
+
+            <tbody id="t-body">
+            </tbody>
+        </table>
+
+
+    <script>
+
+        let tableBody =document.getElementById('t-body')
+        let name =document.getElementById('name')
+        let email =document.getElementById('email')
+        let pass =document.getElementById('pass')
+        let textarea =document.getElementById('textarea')
+        let selection =document.getElementById('selection')
+        let btn =document.getElementById('btn')
+
+        let editIndex = null ;
+
+
+        form.addEventListener('submit' , (e)=>{
+           e.preventDefault();
+
+            let obj = {
+                name:name.value,
+                email:email.value,
+                pass:pass.value,
+                selection:selection.value ,
+                textarea : textarea.value , 
+            };
+
+            
+            let arr = JSON.parse(localStorage.getItem('User_Data')) || [];
+            
+            if (editIndex === null) {
+
+                arr.push(obj)
+                
+            }else{
+               arr[editIndex] = obj ;
+               btn.innerHTML = 'Submit';
+               editIndex = null;
+            }
+            
+            localStorage.setItem('User_Data' , JSON.stringify(arr))
+            display()
+            e.target.reset()
+           
+        })
+
+        const display = ()=>{
+             let data = JSON.parse(localStorage.getItem('User_Data'))
+
+             let tr = ""
+
+             data.map((item , index)=>{
+                tr += `
+                
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${item.name}</td>
+                    <td>${item.email}</td>
+                    <td>${item.pass}</td>
+                    <td>${item.selection}</td>
+                    <td>${item.textarea}</td>
+                    <td><button onclick ="update(${index})">Edit</button> <button onclick="remove(${index})"></>Delete</button></td>
+                </tr>
+                `
+             })
+
+             tableBody.innerHTML = tr;
+        }
+
+        const remove = (index)=>{
+            let data = JSON.parse(localStorage.getItem('User_Data'))
+
+            data.splice(index , 1)
+
+            localStorage.setItem('User_Data' , JSON.stringify(data));
+
+            display()
+        };
+
+        display()
+
+        const update = (index) =>{
+
+            let data = JSON.parse(localStorage.getItem('User_Data'))
+            btn.innerHTML = 'Update' ;
+
+            // console.log(data[0].name)
+            // console.log(data[0].email)
+            // console.log(data[0].pass)
+            // console.log(data[0].selection)
+            // console.log(data[0].textarea)
+
+            name.value = data[index].name ;
+            email.value = data[index].email ;
+            pass.value = data[index].pass ;
+            selection.value = data[index].selection ;
+            textarea.value = data[index].textarea ;
+
+            editIndex = index ;
+           
+
+        }
+
+    </script>
+</body>
+</html>

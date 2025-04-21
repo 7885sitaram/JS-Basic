@@ -1,0 +1,165 @@
+[6:24 pm, 17/4/2025] Himil Sir R&W: <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="form">
+      <input type="text" placeholder="Enter Name" id="name" />
+      <br /><br />
+      <input type="email" placeholder="Enter Email" id="email" />
+      <br /><br />
+      <input type="password" placeholder="Enter Password" id="password" />
+      <br /><br />
+      <textarea id="address" placeholder="Enter Address"></textarea>
+      <br /><br />
+      <select id="country">
+        <option value="">---Select---</option>
+        <option value="India">India</option>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+   …
+[6:36 pm, 17/4/2025] Himil Sir R&W: <!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form id="form">
+      <input type="text" placeholder="Enter Name" id="name" />
+      <br /><br />
+      <input type="email" placeholder="Enter Email" id="email" />
+      <br /><br />
+      <input type="password" placeholder="Enter Password" id="password" />
+      <br /><br />
+      <textarea id="address" placeholder="Enter Address"></textarea>
+      <br /><br />
+      <select id="country">
+        <option value="">---Select---</option>
+        <option value="India">India</option>
+        <option value="USA">USA</option>
+        <option value="UK">UK</option>
+        <option value="Canada">Canada</option>
+      </select>
+      <br /><br />
+      <input type="file" id="file" />
+      <br /><br />
+      <button type="submit" id="submit_btn">Submit</button>
+    </form>
+    <br /><br />
+    <table border="2" cellspacing="0" cellpadding="10">
+      <thead>
+        <tr>
+          <th>Sr No</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Password</th>
+          <th>Address</th>
+          <th>Country</th>
+          <th>Image</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="tableData"></tbody>
+    </table>
+  </body>
+</html>
+<script>
+  let form = document.getElementById("form");
+  let name = document.getElementById("name");
+  let email = document.getElementById("email");
+  let password = document.getElementById("password");
+  let address = document.getElementById("address");
+  let country = document.getElementById("country");
+  let file = document.getElementById("file");
+  let tableData = document.getElementById("tableData");
+  let submit_btn = document.getElementById("submit_btn");
+  let editIndex = null;
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+
+    let fileImage = file.files[0];
+
+    let reader = new FileReader();
+
+    reader.onloadend = () => {
+      let obj = {
+        name: name.value,
+        email: email.value,
+        password: password.value,
+        address: address.value,
+        country: country.value,
+        fileURL: reader.result
+      };
+
+      let arr = JSON.parse(localStorage.getItem("DATA")) || [];
+
+      if (editIndex === null) {
+        arr.push(obj);
+      } else {
+        arr[editIndex] = obj;
+        submit_btn.innerHTML = "Submit";
+        editIndex = null;
+      }
+
+      localStorage.setItem("DATA", JSON.stringify(arr));
+
+      displayData();
+
+      form.reset();
+    };
+    reader.readAsDataURL(fileImage);
+  });
+
+  const displayData = () => {
+    const updatedData = JSON.parse(localStorage.getItem("DATA")) || [];
+
+    let tr = "";
+
+    updatedData.map((ele, index) => {
+      tr += `
+      <tr>
+        <td>${index + 1}</td>  
+        <td>${ele.name}</td>  
+        <td>${ele.email}</td>  
+        <td>${ele.password}</td>  
+        <td>${ele.address}</td>  
+        <td>${ele.country}</td>  
+        <td><img src="${ele.fileURL}" alt="image" width="200" /></td>  
+          <td><button onclick="handleEdit(${index})">Edit</button><button onclick="handleDelete(${index})">Delete</button></td>
+        </tr>
+        `;
+    });
+
+    tableData.innerHTML = tr;
+  };
+
+  const handleDelete = (index) => {
+    const updatedData = JSON.parse(localStorage.getItem("DATA")) || [];
+    updatedData.splice(index, 1);
+    localStorage.setItem("DATA", JSON.stringify(updatedData));
+    displayData();
+  };
+
+  const handleEdit = (index) => {
+    submit_btn.innerHTML = "Update";
+    const updatedData = JSON.parse(localStorage.getItem("DATA")) || [];
+
+    let data = updatedData[index];
+
+    name.value = data.name;
+    email.value = data.email;
+    password.value = data.password;
+    address.value = data.address;
+    country.value = data.country;
+
+    editIndex = index;
+  };
+
+  displayData();
+</script>
