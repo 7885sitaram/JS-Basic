@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+      }
+
+      body {
+        background-color: #f4f6f9;
+        padding: 40px;
+        color: #333;
+      }
+
+      h2 {
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+
+      form {
+        background-color: #fff;
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+      }
+
+      input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+      }
+
+      button {
+        margin-top: 15px;
+        padding: 10px 15px;
+        background-color: #2980b9;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      button:hover {
+        background-color: #1f6391;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: center;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #2c3e50;
+        color: white;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>
+      <u>Create Account</u>
+    </h2>
+    <form id="accountForm">
+      <input type="text" placeholder="Enter CustomerName" id="customerName" />
+      <br /><br />
+      <input
+        type="number"
+        placeholder="Enter Initial Balance"
+        id="initialBalance"
+      />
+      <br /><br />
+      <button type="submit">Create Account</button>
+    </form>
+
+    <h2>
+      <u>Deposit Form</u>
+    </h2>
+    <form id="depositForm">
+      <input
+        type="number"
+        placeholder="Enter Account Number"
+        id="depositAccountNumber"
+      />
+      <br /><br />
+      <input
+        type="number"
+        placeholder="Enter Deposit Amount"
+        id="depositAmount"
+      />
+      <br /><br />
+      <button type="submit">Deposit</button>
+    </form>
+
+    <h2>
+      <u>Withdraw Form</u>
+    </h2>
+    <form id="withdrawForm">
+      <input
+        type="number"
+        placeholder="Enter Account Number"
+        id="withdrawAccountNumber"
+      />
+      <br /><br />
+      <input
+        type="number"
+        placeholder="Enter Deposit Amount"
+        id="withdrawAmount"
+      />
+      <br /><br />
+      <button type="submit">Withdraw</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Sr No</th>
+          <th>Customer Name</th>
+          <th>Account Number</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody id="tableData"></tbody>
+    </table>
+  </body>
+</html>
+<script>
+  // OOPs - 1. Inheritance 2. Encapsulation 3. Polymorphism 4. Abstraction
+
+  class BankAccount {
+    constructor(customerName, initialBalance) {
+      this.customerName = customerName;
+      this.accountNumber = Math.floor(Math.random() * 100000000000);
+      this.initialBalance = initialBalance;
+    }
+
+    deposit(amount) {
+      this.initialBalance += amount;
+    }
+
+    withdraw(amount) {
+      this.initialBalance -= amount;
+    }
+  }
+
+  let accountForm = document.getElementById("accountForm");
+  let customerName = document.getElementById("customerName");
+  let initialBalance = document.getElementById("initialBalance");
+  let accounts = JSON.parse(localStorage.getItem("BankAccount")) || [];
+
+  accountForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let account = new BankAccount(customerName.value, +initialBalance.value);
+
+    accounts.push(account);
+
+    console.log(accounts);
+
+    localStorage.setItem("BankAccount", JSON.stringify(accounts));
+
+    displayData();
+
+    e.target.reset();
+  });
+
+  let depositForm = document.getElementById("depositForm");
+  let depositAccountNumber = document.getElementById("depositAccountNumber");
+  let depositAmount = document.getElementById("depositAmount");
+
+  depositForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    let account1 = accounts.find(
+      (account) => account.accountNumber === +depositAccountNumber.value
+    );
+
+    if (account1) {
+      account1.deposit(+depositAmount.value);
+      localStorage.setItem("BankAccount", JSON.stringify(accounts));
+      displayData();
+    } else {
+      alert("Please Enter Valid Account Number...");
+    }
+
+    console.log(accounts);
+
+    e.target.reset();
+  });
+
+  let withdrawForm = document.getElementById("withdrawForm");
+  let withdrawAccountNumber = document.getElementById("withdrawAccountNumber");
+  let withdrawAmount = document.getElementById("withdrawAmount");
+
+  withdrawForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+    let account1 = accounts.find(
+      (account) => account.accountNumber === +withdrawAccountNumber.value
+    );
+
+    if (account1) {
+      account1.withdraw(+withdrawAmount.value);
+      localStorage.setItem("BankAccount", JSON.stringify(accounts));
+      displayData();
+    } else {
+      alert("Please Enter Valid Account Number...");
+    }
+
+    console.log(accounts);
+    e.target.reset();
+  });
+
+  const displayData = () => {
+    let tr = "";
+    accounts.map((account, index) => {
+      tr += `
+        <tr>
+          <td>${index + 1}</td>  
+          <td>${account.customerName}</td>  
+          <td>${account.accountNumber}</td>  
+          <td>${account.initialBalance}</td>  
+        </tr>
+      `;
+
+      document.getElementById("tableData").innerHTML = tr;
+    });
+  };
+
+  displayData();
+</script>
