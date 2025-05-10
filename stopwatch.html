@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stopwatch</title>
+  <style>
+    body {
+      background: #f0f4f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    .stopwatch-container {
+      background: #ffffff;
+      padding: 40px 50px;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+    }
+
+    .time {
+      font-size: 48px;
+      font-weight: bold;
+      margin-bottom: 30px;
+      color: #333;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    button {
+      background: #007bff;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #0056b3;
+    }
+
+    button:disabled {
+      background: #cccccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div class="stopwatch-container">
+    <div class="time" id="display">00:00:00.000</div>
+    <div class="buttons">
+      <button onclick="start()" id="startBtn">Start</button>
+      <button onclick="pause()" id="pauseBtn" disabled>Pause</button>
+      <button onclick="reset()" id="resetBtn">Reset</button>
+    </div>
+  </div>
+
+  <script>
+    let startTime;
+    let interval;
+    let elapsedTime = 0;
+    let running = false;
+
+    function updateDisplay(time) {
+      const ms = time % 1000;
+      const s = Math.floor(time / 1000) % 60;
+      const m = Math.floor(time / 60000) % 60;
+      const h = Math.floor(time / 3600000);
+
+      document.getElementById('display').textContent =
+        `${pad(h)}:${pad(m)}:${pad(s)}.${pad(ms, 3)}`;
+    }
+
+    function pad(number, digits = 2) {
+      return number.toString().padStart(digits, '0');
+    }
+
+    function start() {
+      if (!running) {
+        startTime = Date.now() - elapsedTime;
+        interval = setInterval(() => {
+          elapsedTime = Date.now() - startTime;
+          updateDisplay(elapsedTime);
+        }, 10);
+        running = true;
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('pauseBtn').disabled = false;
+      }
+    }
+
+    function pause() {
+      if (running) {
+        clearInterval(interval);
+        running = false;
+        document.getElementById('startBtn').disabled = false;
+        document.getElementById('pauseBtn').disabled = true;
+      }
+    }
+
+    function reset() {
+      clearInterval(interval);
+      running = false;
+      elapsedTime = 0;
+      updateDisplay(elapsedTime);
+      document.getElementById('startBtn').disabled = false;
+      document.getElementById('pauseBtn').disabled = true;
+    }
+
+    // Initialize display
+    updateDisplay(0);
+  </script>
+</body>
+</html>
